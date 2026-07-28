@@ -2,6 +2,7 @@
 // Declarations for the Word Search project: the grid and dictionary classes,
 // plus the global findMatches() and search() functions.
 // Implementations live in wordsearch.cpp.
+//Code by Hayden Trent, Alex Viatchenko-Karpinski, Shiv Radhakrishnan.
 
 #ifndef WORDSEARCH_H
 #define WORDSEARCH_H
