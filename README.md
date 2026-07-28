@@ -18,15 +18,15 @@ characters long. All matches are written to an output file.
 
 ## Build
 
-```
+
 g++ -std=c++11 wordsearch.cpp -o wordsearch
-```
+
 
 ## Run
 
-```
+
 ./wordsearch
-```
+
 
 The program prompts for the grid filename at the keyboard. The dictionary
 filename is fixed as `dictionary.txt`, and results are written to `output.txt`.
@@ -37,13 +37,6 @@ Both `dictionary.txt` and the grid file must be in the working directory.
 **Grid file** — the first two numbers are the row and column counts, followed by
 that many letters (whitespace-separated):
 
-```
-15 15
-n y d m k u a s l m o q y r c
-u o t e u i t n m o o t w w p
-...
-```
-
 **Dictionary file** — one word per line. Words shorter than 5 characters are
 ignored when the list is loaded.
 
@@ -52,9 +45,9 @@ ignored when the list is loaded.
 One line per match: the word, its starting cell `(row,col)`, and the index at
 which it was found in the sorted dictionary.
 
-```
+
 north (0,2) 1200
-```
+
 
 ## How it works
 
