@@ -52,6 +52,9 @@ class dictionary {
 private:
     vector<string> words;   // the stored word list
     void heapify(vector<string>& a, int n, int i); //helper function for heap sort
+  
+    void quickSortHelper(int low, int high);// QuickSort helper methods 
+    int partition(int low, int high);
 public:
     void readDict(const string& filename);            // (1a) load words from file
     void selectionSort();                             // (1c) sort words ascending
@@ -59,6 +62,7 @@ public:
     // (1b) output operator, declared friend so it can read the private 'words'.
     friend ostream& operator<<(ostream& outputstring, const dictionary& d);
     void heapSort();  // (Part B, 3) sort words ascending using heap sort
+    void quickSort(); //part B, 1
 };
 
 // (1b) Overloaded output operator, declared here so callers in other files can

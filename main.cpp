@@ -4,8 +4,8 @@
 #include <vector>
 
 
-//#include "grid.h"
-//#include "dictionary.h"
+#include "grid.h"
+#include "dictionary.h"
 
 using namespace std;
 
