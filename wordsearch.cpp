@@ -1,7 +1,7 @@
 // File: wordsearch.cpp
 // Implementations for the Word Search project.
 // Class and function declarations are in wordsearch.h.
-// Code by Hayden Trent, Alex Viatchenko-Karpinski, Shiv Radhakrishnan.
+//Code by Hayden Trent, Alex Viatchenko-Karpinski, Shiv Radhakrishnan.
 
 
 #include "wordsearch.h"
@@ -63,6 +63,7 @@ void grid::printGrid() const {
 // dictionary class implementation  (parts 1a-1d)
 //===========================================
 
+
 // (1a) Read words from the dictionary file, one word per line.
 // Filters out anything shorter than 5 characters, since the puzzle only cares
 // about words of length >= 5.
@@ -111,43 +112,6 @@ void dictionary::selectionSort() {
     }
 }
 
-// Rearranges the array around a pivot element. All words smaller than or equal 
-// to the pivot are placed to its left; larger words are placed to its right.
-int dictionary::partition(int low, int high) {
-    string pivot = words[high]; // Select the last element in the range as pivot
-    int i = low - 1;            // Index marking the edge of smaller elements
-
-    for (int j = low; j < high; ++j) {
-        // If current word is alphabetically smaller than or equal to pivot
-        if (words[j] <= pivot) {
-            ++i;
-            swap(words[i], words[j]);
-        }
-    }
-    // Place pivot in its correct sorted position
-    swap(words[i + 1], words[high]);
-    return (i + 1); // Return pivot index
-}
-
-// Recursive helper for QuickSort
-void dictionary::quickSortHelper(int low, int high) {
-    if (low < high) {
-        // pi is partitioning index; words[pi] is now in its correct place
-        int pi = partition(low, high);
-
-        // Recursively sort elements before and after partition
-        quickSortHelper(low, pi - 1);
-        quickSortHelper(pi + 1, high);
-    }
-}
-
-// QuickSort: sorts 'words' vector into ascending order.
-void dictionary::quickSort() {
-    if (!words.empty()) {
-        quickSortHelper(0, words.size() - 1);
-    }
-}
-
 // (1d) Binary search over the sorted 'words' vector.
 // Returns the index of 'target' if present, or -1 if not found.
 // Repeatedly halves the search range by comparing against the middle element.
@@ -167,8 +131,66 @@ int dictionary::binarySearch(const string& target) const {
             first = mid + 1;           // target is later: discard the left half
         }
     }
-    return -1;                         // range exhausted without a match
+    return -1;                          // range exhausted without a match
 }
+
+
+// (part b) Heapify: sift the value at index i down into its correct place within
+// a max-heap of size n, stored in vector 'a'. Assumes the subtrees rooted at i's
+// children are already valid heaps. After this runs, the subtree rooted at i is a
+// valid max-heap (largest value at the top).
+void dictionary::heapify(vector<string>& a, int n, int i) {
+    int l = 2*i + 1;   // index of the left child  (0-based heap arithmetic)
+    int r = 2*i + 2;   // index of the right child
+    int largest;       // index of the largest among node i and its children
+
+    // Compare node i with its left child. The l < n guard keeps us inside the
+    // active heap (indices 0..n-1); anything at n or beyond is outside it.
+    if (l < n && a[l] > a[i]) {
+        largest = l;   // left child is bigger, so far it's the largest
+    } else {
+        largest = i;   // node i is still the largest so far
+    }
+
+    // Compare the current largest with the right child.
+    if (r < n && a[r] > a[largest]) {
+        largest = r;   // right child is bigger than both
+    }
+
+    // If a child outranked node i, swap them and continue sifting down into the
+    // subtree we just disturbed, since the moved-down value may still be too small.
+    if (largest != i) {
+        swap(a[i], a[largest]);
+        heapify(a, n, largest);   // recurse at the child's position
+    }
+}
+
+// (part b) Heapsort: sorts 'words' into ascending order using a heap.
+// Per the assignment, the heap is a local copy used only for sorting: the words
+// are copied in, sorted, and copied back out, leaving binarySearch able to run
+// on the now-sorted 'words'.
+void dictionary::heapSort() {
+    int n = words.size();
+    vector<string> heap = words;   // copy the unsorted words into a local heap
+
+    // Phase 1 - build a max-heap: heapify every internal (non-leaf) node, working
+    // from the last parent (n/2 - 1) up to the root. Bottom-up guarantees each
+    // node's subtrees are already valid heaps when it is heapified.
+    for (int i = n/2 - 1; i >= 0; i--) {
+        heapify(heap, n, i);
+    }
+
+    // Phase 2 - extract: repeatedly move the max (root, index 0) to the end of the
+    // active heap, shrink the heap by one, and re-heapify the new root over the
+    // smaller range. Parking each max at the back fills the vector ascending.
+    for (int i = n-1; i >= 0; i--) {
+        swap(heap[0], heap[i]);   // move current max to position i (end of active heap)
+        heapify(heap, i, 0);      // restore heap order over the remaining [0, i)
+    }
+
+    words = heap;   // copy the sorted result back into the member
+}
+
 
 // (1b) Overloaded output operator: prints every stored word on its own line.
 // Global (non-member) so the stream can be the left operand (cout << dict).
@@ -233,7 +255,7 @@ void findMatches(const dictionary& dict, const grid& g, const string& outputFile
 //===========================================
 // search  (part 4)
 //===========================================
-void search() {
+void search(int selection) {
     // (1) Read the grid filename from the keyboard.
     // The dictionary filename is fixed as "dictionary.txt".
     string gridFile;
@@ -249,13 +271,30 @@ void search() {
 
     // (3) Sort the dictionary so binarySearch will work in findMatches.
     // This MUST happen before any lookups.
-    d.selectionSort();
+    switch (selection) {
+        case 1:
+            d.selectionSort();
+            break;
+        case 2:
+            d.heapSort();
+            break;
+        //UNCOMMENT THIS AFTER PART 1 IS DONE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //case 3:
+        //    d.quickSort();
+        //    break;
+        default:
+            cout << "Defaulting to selection sort." << endl;
+            d.selectionSort();
+    }
 
     // (4) Scan the grid and write all found words to "output.txt".
     findMatches(d, g, "output.txt");
 }
 
 int main() {
-    search();   // read input, sort dictionary, scan grid, write output.txt
+    int selection;
+    cout << "Choose sorting method (1 for selection sort, 2 for heap sort, 3 for quick sort, 4 for selection sort (default)): ";
+    cin >> selection;
+    search(selection);   // read input, sort dictionary, scan grid, write output.txt
     return 0;
 }
