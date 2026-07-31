@@ -51,10 +51,14 @@ public:
 class dictionary {
 private:
     vector<string> words;   // the stored word list
+    void quickSortHelper(int low, int high); //quicksort helper methods
+    int partition(int low, int high);
 public:
     void readDict(const string& filename);            // (1a) load words from file
     void selectionSort();                             // (1c) sort words ascending
-    int binarySearch(const string& target) const;    // (1d) find a word, return its index
+    int binarySearch(const string& target) const;  
+    void quickSort();
+      // (1d) find a word, return its index
     // (1b) output operator, declared friend so it can read the private 'words'.
     friend ostream& operator<<(ostream& outputstring, const dictionary& d);
 };

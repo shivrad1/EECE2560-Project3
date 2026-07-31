@@ -1,7 +1,7 @@
 // File: wordsearch.cpp
 // Implementations for the Word Search project.
 // Class and function declarations are in wordsearch.h.
-//Code by Hayden Trent, Alex Viatchenko-Karpinski, Shiv Radhakrishnan.
+// Code by Hayden Trent, Alex Viatchenko-Karpinski, Shiv Radhakrishnan.
 
 
 #include "wordsearch.h"
@@ -111,6 +111,43 @@ void dictionary::selectionSort() {
     }
 }
 
+// Rearranges the array around a pivot element. All words smaller than or equal 
+// to the pivot are placed to its left; larger words are placed to its right.
+int dictionary::partition(int low, int high) {
+    string pivot = words[high]; // Select the last element in the range as pivot
+    int i = low - 1;            // Index marking the edge of smaller elements
+
+    for (int j = low; j < high; ++j) {
+        // If current word is alphabetically smaller than or equal to pivot
+        if (words[j] <= pivot) {
+            ++i;
+            swap(words[i], words[j]);
+        }
+    }
+    // Place pivot in its correct sorted position
+    swap(words[i + 1], words[high]);
+    return (i + 1); // Return pivot index
+}
+
+// Recursive helper for QuickSort
+void dictionary::quickSortHelper(int low, int high) {
+    if (low < high) {
+        // pi is partitioning index; words[pi] is now in its correct place
+        int pi = partition(low, high);
+
+        // Recursively sort elements before and after partition
+        quickSortHelper(low, pi - 1);
+        quickSortHelper(pi + 1, high);
+    }
+}
+
+// QuickSort: sorts 'words' vector into ascending order.
+void dictionary::quickSort() {
+    if (!words.empty()) {
+        quickSortHelper(0, words.size() - 1);
+    }
+}
+
 // (1d) Binary search over the sorted 'words' vector.
 // Returns the index of 'target' if present, or -1 if not found.
 // Repeatedly halves the search range by comparing against the middle element.
@@ -130,7 +167,7 @@ int dictionary::binarySearch(const string& target) const {
             first = mid + 1;           // target is later: discard the left half
         }
     }
-    return -1;                          // range exhausted without a match
+    return -1;                         // range exhausted without a match
 }
 
 // (1b) Overloaded output operator: prints every stored word on its own line.
