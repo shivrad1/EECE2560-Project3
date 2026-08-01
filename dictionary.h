@@ -23,7 +23,7 @@ class dictionary
 {
 private:
     std::vector<std::string> words;   // the stored word list
-  
+
     void quickSortHelper(int low, int high);// QuickSort helper methods
     int partition(int low, int high);
 public:
@@ -35,9 +35,5 @@ public:
     void heapSort();  // (Part B, 3) sort words ascending using heap sort
     void quickSort(); //part B, 1
 };
-
-// (1b) Overloaded output operator, declared here so callers in other files can
-// use it. Global (non-member) so the stream is the left operand (cout << dict).
-std::ostream& operator<<(std::ostream& outputstring, const dictionary& d);
 
 #endif

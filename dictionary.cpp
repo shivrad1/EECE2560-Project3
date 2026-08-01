@@ -146,20 +146,22 @@ void dictionary::quickSort()
     }
 }
 
+// (1b) Overloaded output operator: prints every stored word on its own line.
+ostream& operator<<(ostream& outputstring, const dictionary& d)
+{
+    for (const auto& word : d.words) {
+        outputstring << word << "\n";
+    }
+    return outputstring;
+}
 
-// (part b) Heapify: sift the value at index i down into its correct place within
-// a max-heap of size n, stored in vector 'a'. Assumes the subtrees rooted at i's
-// children are already valid heaps. After this runs, the subtree rooted at i is a
-// valid max-heap (largest value at the top).
-
-
-// (part b) Heapsort: sorts 'words' into ascending order using a heap.
-// Per the assignment, the heap is a local copy used only for sorting: the words
-// are copied in, sorted, and copied back out, leaving binarySearch able to run
-// on the now-sorted 'words'.
+// (part b) Heapsort: sorts 'words' into ascending order by delegating to the
+// heap class. A local heap object is built from the word list, sorted, and the
+// sorted result is copied back into 'words' so binarySearch can run on it.
 void dictionary::heapSort()
 {
-    heap wordHeap;
-    wordHeap.initializeMaxHeap(words);
-    words = wordHeap.heapSort();
+    heap wordHeap;                          // local heap used only for sorting
+    wordHeap.initializeMaxHeap(words);      // copy words in and build the max-heap
+    words = wordHeap.heapSort();            // sort, then copy the result back out
 }
+
